@@ -20,8 +20,13 @@ function viewMemory(from, to) // to = from + proglist.reduce(function(p, q){retu
 {
 	res = [];
 	for(var i = from; i < to + 1; i++)
-		res.push(memory[i] === -1 ? "XX" : sprintf("%02X", memory[i]));
+		res.push(memory[i] === -1 ? "XX" : toHex(memory[i], 2));
 	return res;
+}
+
+function toHex(n, pad)
+{
+	return ("0000000000" + n.toString(16)).substr(-pad).toUpperCase();
 }
 
 
@@ -123,7 +128,6 @@ class Linker
 
 	getSymbolAddress(symbol)
 	{
-		// return this.EST[symbol] == undefined ? -1 : sprintf("%06X", this.EST[symbol]);
 		// return this.EST[symbol] == undefined ? -1 : this.EST[symbol];
 		return this.EST[symbol];
 	}
@@ -149,7 +153,17 @@ class Linker
 			{
 				loc = this.getSymbolAddress(p.head.pname) + m.start; // - m.disp % 2; // this can't be right
 				x = this.getSymbolAddress(m.symbol); // ask EST instead
-				x = sprintf("%06X", x).match(/.{2}/g).map(x => parseInt(x, 16));
+				
+				function sHEX3(p)
+				{
+					var q = [];
+					for(var i = 0; i < 3; i++, p >>= 8)
+						q.unshift(p % 256); //prepend result
+					return q;
+				}
+
+				x = sHEX3(x);
+
 				if(m.sign === '-')
 				{
 					x.map(p => -1 * p); // this doesnt work for some reason
@@ -190,7 +204,7 @@ function appendMemRow()
 	{
 		memtable.insertRow();
 		c = memtable.rows[row + 1].insertCell();
-		c.innerText = sprintf("%06X", 16 * row + from);
+		c.innerText = toHex(16 * row + from, 6);
 		c.className = "memaddr";
 		for(i = 0; i < 16; i++)
 			memtable.rows[row + 1].insertCell().innerText = vm[16 * row + i];

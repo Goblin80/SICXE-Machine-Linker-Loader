@@ -5,16 +5,17 @@
     <title>Linking Loader</title>
     <link rel="stylesheet" type="text/css" href="css/linker.css">
     <script type="text/javascript" src="js/linker.js"></script>
-    <script type="text/javascript" src="js/sprintf.js"></script>
 </head>
 
 <body>
-    <label for="t_start">Starting Address:</label><input type="text" id="t_start" value="0000000" style="width: 8%;"><br/>
     <input type="file" onchange="readfile(this)"><br/>
     <textarea rows="10" cols="95" id="t1">LOAD HERE</textarea>
     <br/>
-    <input type="radio" name="mode" id="r1" value="absolute" checked="true"><label for="r1">Absolute</label><br/>
-    <input type="radio" name="mode" id="r2" value="relative"><label for="r2">Relative</label><br/>
+    <input type="radio" name="mode" id="r1" value="absolute" checked="true" onchange="st.hidden = true;"><label for="r1">Absolute</label><br/>
+    <input type="radio" name="mode" id="r2" value="relative" onclick="st.hidden = false;t_start.select();"><label for="r2">Relative</label><br/>
+    <div id = "st" hidden="true">
+        <label for="t_start">Starting Address:</label><input type="text" id="t_start" value="0000000" style="width: 8%;"><br/>
+    </div>
     <button id="btn_link" disabled="true" onclick="link()">Link Programs</button>
 
     <button id="btn_viewMem" onclick="appendMemRow();">View Memory</button>
